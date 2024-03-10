@@ -12,15 +12,22 @@
     "jwk"
   ],
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "nodemon ./bin/www",
+    "audit": "npm audit",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
-    "debug": "~2.6.9",
-    "express": "^4.18.2",
-    "http-errors": "~1.6.3",
+    "debug": "~4.3.4",
+    "express": "^4.18.3",
+    "http-errors": "~2.0.0",
     "jsonwebtoken": "^9.0.2",
-    "morgan": "~1.9.1",
+    "morgan": "~1.10.0",
     "node-jose": "^2.2.0"
   },
   "repository": {
@@ -32,5 +39,8 @@
   "main": "bin/www",
   "bin": {
     "start": "bin/www"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }

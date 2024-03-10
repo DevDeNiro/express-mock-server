@@ -1,75 +1,97 @@
-var express = require('express');
-var router = express.Router();
-var getKeyStore = require('../jwt/keyStore.js').getKeyStore;
-var jose = require('node-jose');
+const express = require('express');
+const router = express.Router();
+const getKeyStore = require('../jwt/keyStore.js').getKeyStore;
+const jose = require('node-jose');
+const bodyParser = require("body-parser");
+const {hash, compare} = require("bcrypt");
+const {generateJwtToken} = require("../jwt/generateJwtToken");
 
+// parse application/x-www-form-urlencoded
+router.use(bodyParser.json());
 
-router.get('/', function(req, res, next) {
-  res.json({hello: "world!"});
+// Simulate a database
+const users = {}
+
+router.post('/api/signup', async (req, res) => {
+    const {email, password} = req.body;
+    if (!email || !password) {
+        return res.status(400).json({error: "Email and password are required"});
+    }
+    if (users[email]) {
+        return res.status(400).json({error: "User already exists"});
+    }
+    if (password.length < 8) {
+        return res.status(400).json({error: "Password must be at least 8 characters"});
+    }
+
+    const hashedPassword = await hash(password, 10);
+    console.log(`Creating user with email: ${email} and password: ${hashedPassword}`);
+    users[email] = {email, password: hashedPassword};
+    res.status(201).json({message: "User created"});
 });
 
-router.get('/shutdown', function(req, res, next) {
-  res.json({hello: "world!"});
+router.post('/api/login', async (req, res) => {
+    const {email, password} = req.body;
+    const user = users[email];
+    if (!user || !(await compare(password, user.password))) {
+        return res.status(401).json({error: "Invalid email or password"});
+    }
+
+    const tokenPayload = {
+        username: user.email,
+        userId: 1,
+        authorities: ["AUTH_1"]
+    }
+
+    const token = await generateJwtToken(tokenPayload);
+    res.json({token: token});
 });
 
-router.get('/.well-known/jwks.json', async function(req, res) {
-  var keys = await getKeyStore();
-  res.json(keys.toJSON());
+
+router.get('/', function (req, res, next) {
+    res.json({hello: "wordld!"});
 });
 
-router.post('/token', async function(req, res) {
-  var keys = await getKeyStore();
-  var key = keys.all()[0];
-  var body = req.body;
-  body["iat"] = Math.floor(Date.now() / 1000);
-  body["exp"] = Math.floor(Date.now() / 1000) + 3600;
-  var token = await new Promise((resolve) => {
-    jose.JWS.createSign({ alg: 'RS256', format: 'compact' }, key)
-      .update(JSON.stringify(req.body))
-      .final()
-      .then(function(result) {
-        resolve(result);
-      });
+router.get('/shutdown', function (req, res, next) {
+    res.json({hello: "shutdown!"});
+});
 
-  });
-  res.json({token: token});
+router.get('/.well-known/jwks.json', async function (req, res) {
+    const keys = await getKeyStore();
+    res.json(keys.toJSON());
+});
+
+router.post('/token', async function (req, res) {
+    const body = req.body;
+    const token = await generateJwtToken(body);
+    res.json({token: token});
 });
 
 function getDefaultJwtClaim() {
-  var index = process.argv.indexOf("--claims");
-  var args = process.argv.slice(index + 1);
-  if (args.length > 0) {
-    return JSON.parse(args[0]);
-  } else {
-    return {"username": "test@test.com", "userId": 1, "authorities": ["AUTH_1"]};
-  }
+    const index = process.argv.indexOf("--claims");
+    const args = process.argv.slice(index + 1);
+    if (args.length > 0) {
+        return JSON.parse(args[0]);
+    } else {
+        return {
+            "username": "test@test.com",
+            "userId": 1,
+            "authorities": ["AUTH_1"]
+        };
+    }
 }
 
 // router.options('/token', async function(req, res) {
 //   console.log("============options")
-//   var body = 'GET, POST, DELETE, PUT, PATCH';
+//   const body = 'GET, POST, DELETE, PUT, PATCH';
 //   res.set('Allow', body);
 //   res.send(body);
 // });
 
-router.get('/token', async function(req, res) {
-  var keys = await getKeyStore();
-  var key = keys.all()[0];
-  var body = Object.keys(req.query).length > 0 ? req.query : getDefaultJwtClaim();
-
-  body["iat"] = Math.floor(Date.now() / 1000);
-  body["exp"] = Math.floor(Date.now() / 1000) + 3600;
-
-  var token = await new Promise((resolve) => {
-    jose.JWS.createSign({ alg: 'RS256', format: 'compact' }, key)
-      .update(JSON.stringify(body))
-      .final()
-      .then(function(result) {
-        resolve(result);
-      });
-
-  });
-  res.json({token: token});
+router.get('/token', async function (req, res) {
+    const body = req.body;
+    const token = await generateJwtToken(body);
+    res.json({token: token});
 });
 
 
