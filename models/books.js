@@ -1,4 +1,4 @@
-const book = [
+const theLibrary = [
     {
         id: 1,
         title: "The road",
@@ -33,4 +33,4 @@ const book = [
     }
 ];
 
-module.exports = book;
+module.exports = theLibrary;

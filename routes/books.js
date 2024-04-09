@@ -1,19 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const {getKeyStore, jose, hash, compare, generateJwtToken} = require('../utils/utils');
-const book = require("../models/books");
+const theLibrary = require("../models/books");
 
-let books = {}
+let books = theLibrary.reduce((acc, book) => {
+    acc[book.id] = book;
+    return acc;
+}, {});
 
 router.get('/', (req, res) => {
-    res.json(Object.values(book));
+    try {
+        res.json(Object.values(books));
+    } catch (e) {
+        res.status(500).json({error: e.message});
+    }
 });
 
 router.post('/', (req, res) => {
     const {title, author, description, price, currency} = req.body;
-    const id = Object.keys(books).length + 1;
-    books[id] = {id, title, author, description, price, currency};
-    res.status(201).json({message: "Book created", book: books[id]});
+    const newId = Math.max(0, ...Object.keys(books).map(Number)) + 1;
+    books[newId] = {id: newId, title, author, description, price, currency};
+    res.status(201).json({message: "Book created", book: books[newId]});
 });
 
 router.put('/:id', (req, res) => {
