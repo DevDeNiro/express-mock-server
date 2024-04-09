@@ -3,8 +3,7 @@ const jose = require('node-jose');
 
 
 async function generateJwtToken(payload) {
-    const keys = await getKeyStore();
-    const key = keys.all()[0];
+    const key = await getKeyStore();
     payload["iat"] = Math.floor(Date.now() / 1000);
     payload["exp"] = Math.floor(Date.now() / 1000) + 3600;
 

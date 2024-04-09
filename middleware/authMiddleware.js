@@ -1,5 +1,5 @@
 const jose = require('node-jose');
-const {getKeyStore} = require("./keyStore");
+const {getKeyStore} = require("../jwt/keyStore");
 
 const verifyJwtToken = async (req, res, next) => {
     const token = req.headers['authorization']?.split(' ')[1]; // Bearer token

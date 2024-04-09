@@ -1,8 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const {getKeyStore, jose, hash, compare, generateJwtToken} = require('./index');
+
+const {hash, compare, generateJwtToken} = require('../utils/utils');
+const {verifyJwtToken} = require("../middleware/authMiddleware");
+
 const users = {}
 
+function getDefaultJwtClaim(user) {
+    if (user) {
+        return {
+            username: user.email,
+            userId: user.id,
+            authorities: user.authorities || ["AUTH_1"]
+        };
+    } else {
+
+        return {
+            "username": "test@test.com",
+            "userId": 1,
+            "authorities": ["AUTH_1"]
+        };
+    }
+}
 
 router.post('/api/signup', async (req, res) => {
     const {email, password} = req.body;
@@ -29,16 +48,14 @@ router.post('/api/login', async (req, res) => {
         return res.status(401).json({error: "Invalid email or password"});
     }
 
-    const tokenPayload = {
-        username: user.email,
-        userId: 1,
-        authorities: ["AUTH_1"]
-    }
+    const tokenPayload = getDefaultJwtClaim(user)
 
     const token = await generateJwtToken(tokenPayload);
     res.json({token: token});
 });
 
+// M I D D L E W A R E
+router.use(verifyJwtToken);
 
 router.put('/api/user/:email', async (req, res) => {
     const {email} = req.params;
@@ -78,3 +95,6 @@ router.get('/api/users', (req, res) => {
 
     res.json(usersList);
 });
+
+
+module.exports = router;
