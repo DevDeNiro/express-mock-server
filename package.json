@@ -1,5 +1,5 @@
 {
-  "name": "jwt-mock-server",
+  "name": "api-mock-server",
   "version": "0.0.5",
   "description": "Start a mock jwt authentication server for local development",
   "keywords": [
