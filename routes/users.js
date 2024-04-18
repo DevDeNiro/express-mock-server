@@ -23,7 +23,7 @@ function getDefaultJwtClaim(user) {
     }
 }
 
-router.post('/api/signup', async (req, res) => {
+router.post('/signup', async (req, res) => {
     const {email, password} = req.body;
     if (!email || !password) {
         return res.status(400).json({error: "Email and password are required"});
@@ -41,7 +41,7 @@ router.post('/api/signup', async (req, res) => {
     res.status(201).json({message: "User created"});
 });
 
-router.post('/api/login', async (req, res) => {
+router.post('/login', async (req, res) => {
     const {email, password} = req.body;
     const user = users[email];
     if (!user || !(await compare(password, user.password))) {
@@ -57,7 +57,7 @@ router.post('/api/login', async (req, res) => {
 // M I D D L E W A R E
 router.use(verifyJwtToken);
 
-router.put('/api/user/:email', async (req, res) => {
+router.put('/users/:email/update', async (req, res) => {
     const {email} = req.params;
     const {newName, newPassword} = req.body;
     const user = users[email];
@@ -77,7 +77,7 @@ router.put('/api/user/:email', async (req, res) => {
     res.json({message: "User profile updated", user: {email: user.email, name: user.name}});
 });
 
-router.delete('/api/user/:email', (req, res) => {
+router.delete('/users/:email', (req, res) => {
     const {email} = req.params;
     if (!users[email]) {
         return res.status(404).json({error: "User not found"});
@@ -95,6 +95,7 @@ router.get('/api/users', (req, res) => {
 
     res.json(usersList);
 });
+
 
 
 module.exports = router;

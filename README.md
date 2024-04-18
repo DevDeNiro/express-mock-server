@@ -1,6 +1,6 @@
-## A JWT mock server for local development
+# A JWT mock server for local development
 
-### Run in local
+## Run in local
 
 ```shell
 npm install
@@ -23,7 +23,46 @@ To run in a different port 3000
 PORT=3000 npx --package jwt-mock-server start
 ```
 
-### endpoints
+### Endpoints
+
+#### Fake API
+
+##### Auth
+
+- POST /api/login
+- POST /api/signup
+- POST /api/logout
+  ```TODO: implement ```
+- GET /api/whoami
+  ```TODO: implement ```
+- GET /api/refresh
+  ```TODO: implement ```
+- GET /api/verify
+  ```TODO: implement ```
+- GET /api/verify/:token
+  ```TODO: implement ```
+- GET /api/reset
+  ```TODO: implement ```
+- GET /api/users/:id/roles
+  ```TODO: implement ```
+- GET /api/users/:id/permissions
+  ```TODO: implement ```
+
+##### Users
+
+- GET /api/users
+- PUT /api/users/:email/update
+- DELETE /api/users/:email
+
+##### Books
+
+- GET /api/books
+- GET /api/books/:id
+- POST /api/books
+- PUT /api/books/:id
+- DELETE /api/books/:id
+
+#### Token's
 
 Retrieve the server's public keys (JWKS):
 
