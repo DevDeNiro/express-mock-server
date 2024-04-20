@@ -7,11 +7,17 @@ async function generateJwtToken(payload) {
     payload["iat"] = Math.floor(Date.now() / 1000);
     payload["exp"] = Math.floor(Date.now() / 1000) + 3600;
 
-    return await new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         jose.JWS.createSign({alg: 'RS256', format: 'compact'}, key)
             .update(JSON.stringify(payload))
             .final()
-            .then(resolve, reject);
+            .then(token => {
+                console.log("Generated Token: ", token);
+                resolve(token);
+            }, error => {
+                console.error("Error generating token: ", error);
+                reject(error);
+            });
     });
 }
 

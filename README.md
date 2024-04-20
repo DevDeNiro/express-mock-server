@@ -1,5 +1,11 @@
 # A JWT mock server for local development
 
+## Run in local with docker
+
+```shell
+docker-compose up
+``` 
+
 ## Run in local
 
 ```shell

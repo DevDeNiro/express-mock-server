@@ -1,18 +1,12 @@
-const users = [
-    {
-        id: 1,
-        firstName: "Jean",
-        lastName: "Michel",
-        email: "jean.michel@gmail.com",
-        password: "password"
-    },
-    {
-        id: 2,
-        firstName: "John",
-        lastName: "Doe",
-        email: "john.doe@outlook.com",
-        password: "password",
-    }
-]
+const mongoose = require('mongoose');
 
-export default users;
+const userSchema = new mongoose.Schema({
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    name: { type: String },
+    tokenGeneratedAt: { type: Date }
+});
+
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;

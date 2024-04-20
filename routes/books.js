@@ -1,47 +1,53 @@
 const express = require('express');
 const router = express.Router();
 const {getKeyStore, jose, hash, compare, generateJwtToken} = require('../utils/utils');
-const theLibrary = require("../models/books");
+const TheLibrary = require("../models/books");
 
-let books = theLibrary.reduce((acc, book) => {
-    acc[book.id] = book;
-    return acc;
-}, {});
-
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        res.json(Object.values(books));
+        const books = await TheLibrary.find({});
+        res.json(books);
     } catch (e) {
         res.status(500).json({error: e.message});
     }
 });
 
-router.post('/', (req, res) => {
-    const {title, author, description, price, currency} = req.body;
-    const newId = Math.max(0, ...Object.keys(books).map(Number)) + 1;
-    books[newId] = {id: newId, title, author, description, price, currency};
-    res.status(201).json({message: "Book created", book: books[newId]});
+router.post('/', async (req, res) => {
+    const {title, author, description, genre, year, price, currency} = req.body;
+    const book = new TheLibrary({title, author, description, genre, year, price, currency});
+    try {
+        await book.save();
+        res.status(201).json({message: "Book created", book});
+    } catch (e) {
+        res.status(500).json({error: e.message});
+    }
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
     const {id} = req.params;
-    const {title, author, description, price, currency} = req.body;
-    if (!books[id]) {
-        return res.status(404).json({error: "Book not found"});
+    const {title, author, description, genre, year, price, currency} = req.body;
+    try {
+        const book = await TheLibrary.findByIdAndUpdate(id, {title, author, description, genre, year, price, currency}, {new: true});
+        if (!book) {
+            return res.status(404).json({error: "Book not found"});
+        }
+        res.json({message: "Book updated", book});
+    } catch (e) {
+        res.status(500).json({error: e.message});
     }
-
-    books[id] = {id, title, author, description, price, currency};
-    res.json({message: "Book updated", book: books[id]});
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
     const {id} = req.params;
-    if (!books[id]) {
-        return res.status(404).json({error: "Book not found"});
+    try {
+        const result = await TheLibrary.findByIdAndDelete(id);
+        if (result === null) {
+            return res.status(404).json({error: "Book not found"});
+        }
+        res.json({message: "Book deleted"});
+    } catch (e) {
+        res.status(500).json({error: e.message});
     }
-
-    delete books[id];
-    res.json({message: "Book deleted"});
 });
 
 module.exports = router;

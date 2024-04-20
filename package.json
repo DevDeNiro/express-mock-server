@@ -1,6 +1,6 @@
 {
   "name": "api-mock-server",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Start a mock jwt authentication server for local development",
   "keywords": [
     "jwt",
@@ -17,16 +17,17 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.17.0"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "debug": "~4.3.4",
-    "express": "^4.18.3",
+    "express": "^4.19.2",
     "http-errors": "~2.0.0",
     "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.3.2",
     "morgan": "~1.10.0",
     "node-jose": "^2.2.0"
   },
