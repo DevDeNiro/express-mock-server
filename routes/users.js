@@ -25,7 +25,7 @@ function getDefaultJwtClaim(user) {
 let TOKEN_TIMEOUT = 1000 * 60 * 5;
 
 
-router.post('/signup', async (req, res) => {
+router.post('/auth/signup', async (req, res) => {
     const {email, password} = req.body;
     if (!email || !password) {
         return res.status(400).json({error: "Email and password are required"});
@@ -53,7 +53,7 @@ router.post('/signup', async (req, res) => {
     }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/auth/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });

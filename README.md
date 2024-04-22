@@ -3,7 +3,7 @@
 ## Run in local with docker
 
 ```shell
-docker-compose up
+docker-compose up --build
 ``` 
 
 ## Run in local
