@@ -65,4 +65,19 @@ router.post('/login', async (req, res) => {
     }
 });
 
+router.post('/logout', async (req, res) => {
+    try {
+        const {email} = req.body;
+        const user = await User.findOne({email});
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        user.tokenGeneratedAt = null;
+        await user.save();
+        res.send('Logged out');
+    } catch (error) {
+        console.error(error);
+    }
+})
+
 module.exports = router;
