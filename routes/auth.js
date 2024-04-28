@@ -48,9 +48,9 @@ router.post('/login', async (req, res) => {
         }
 
         // Check if a token was recently generated
-        if (user.tokenGeneratedAt && (new Date() - user.tokenGeneratedAt) < TOKEN_TIMEOUT) {
-            return res.status(409).send('A token has already been generated recently. Please wait.');
-        }
+        // if (user.tokenGeneratedAt && (new Date() - user.tokenGeneratedAt) < TOKEN_TIMEOUT) {
+        //     return res.status(409).send('A token has already been generated recently. Please wait.');
+        // }
 
         const tokenPayload = getDefaultJwtClaim(user)
         const token = await generateJwtToken(tokenPayload);
