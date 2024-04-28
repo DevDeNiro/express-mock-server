@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const {generateJwtToken} = require('../utils/utils');
 const {getDefaultJwtClaim} = require('../jwt/getDefaultJwtClaim');
+const {findOne} = require("../models/users");
 
 router.get('/.well-known/jwks', async function (req, res) {
     const keys = await getKeyStore();
@@ -18,7 +19,7 @@ router.post('/', async function (req, res) {
 router.post('/refresh-token', async (req, res) => {
     const {email} = req.body;
     try {
-        const user = await User.findOne({email});
+        const user = await findOne({email});
         if (!user) {
             return res.status(404).json({error: 'User not found'});
         }
