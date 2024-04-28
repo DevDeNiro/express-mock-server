@@ -7,7 +7,6 @@ async function getKeyStore() {
             return await keystore.generate("RSA", 2048, {alg: "RS256", use: 'sig'})
         } else {
             console.log("Key already exists");
-            // return keystore.get();
             const keys = await keystore.all();
             return keys[0];
         }
