@@ -4,12 +4,12 @@ const keystore = jose.JWK.createKeyStore();
 async function getKeyStore() {
     try {
         if (keystore.all().length === 0) {
-            const key = await keystore.generate("RSA", 2048, {alg: "RS256", use: 'sig'})
-            console.log("Key generated");
-            return key;
+            return await keystore.generate("RSA", 2048, {alg: "RS256", use: 'sig'})
         } else {
             console.log("Key already exists");
-            return keystore.get();
+            // return keystore.get();
+            const keys = await keystore.all();
+            return keys[0];
         }
     } catch (error) {
         console.error("Error generating key: ", error);

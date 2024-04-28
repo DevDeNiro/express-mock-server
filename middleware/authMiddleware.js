@@ -7,14 +7,10 @@ const verifyJwtToken = async (req, res, next) => {
         return res.status(401).json({error: 'Access denied. No token provided.'});
     }
 
-    const _ = (() => ({
-        alg: 'RS256',
-        typ: 'JWT'
-    }))
-
     try {
         const keystore = await getKeyStore();
-        await jose.JWS.createVerify(keystore, _).verify(token);
+        const verifier = jose.JWS.createVerify(keystore);
+        await verifier.verify(token);
         next();
     } catch (error) {
         res.status(400).json({error: 'Invalid token.'});

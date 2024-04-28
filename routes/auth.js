@@ -67,6 +67,7 @@ router.post('/login', async (req, res) => {
 
 router.post('/logout', async (req, res) => {
     try {
+        console.log("Received email:", req.body.email);
         const {email} = req.body;
         const user = await User.findOne({email});
         if (!user) {
@@ -77,7 +78,9 @@ router.post('/logout', async (req, res) => {
         res.send('Logged out');
     } catch (error) {
         console.error(error);
+        res.status(500).send('Internal Server Error');
     }
-})
+});
+
 
 module.exports = router;
