@@ -16,6 +16,23 @@ router.post('/', async function (req, res) {
     res.json({token: token});
 });
 
+// Get token from email
+router.post('/get-token', async (req, res) => {
+    const {email} = req.body;
+    try {
+        const user = await findOne({email});
+        if (!user) {
+            return res.status(404).json({error: 'User not found'});
+        }
+        const tokenPayload = getDefaultJwtClaim(user);
+        const token = await generateJwtToken(tokenPayload);
+        res.json({token});
+    } catch (error) {
+        console.error("Error getting token: ", error);
+        res.status(500).json({error: 'Error getting token'});
+    }
+})
+
 router.post('/refresh-token', async (req, res) => {
     const {email} = req.body;
     try {
@@ -31,5 +48,30 @@ router.post('/refresh-token', async (req, res) => {
         res.status(500).json({error: 'Error refreshing token'});
     }
 });
+
+router.post('/get-token', async (req, res) => {
+    const {email} = req.body;
+    try {
+        const user = await findOne({email});
+        if (!user) {
+            return res.status(404).json({error: 'User not found'});
+        }
+
+        let token = getDefaultJwtClaim(email);
+        res.json({token});
+        // if (token && !isTokenExpired(token)) {
+        //     console.log("Token still valid, returning existing token.");
+        //     return res.json({token});
+        // }
+        //
+        // // Si aucun token valide, générez un nouveau token
+        // const tokenPayload = getDefaultJwtClaim(user);
+        // token = await generateJwtToken(tokenPayload);
+    } catch (error) {
+        console.error("Error getting token: ", error);
+        res.status(500).json({error: 'Error getting token'});
+    }
+});
+
 
 module.exports = router;

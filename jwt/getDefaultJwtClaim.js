@@ -6,7 +6,6 @@ function getDefaultJwtClaim(user) {
             authorities: user.authorities || ["AUTH_1"]
         };
     } else {
-
         return {
             "username": "test@test.com",
             "userId": 1,
