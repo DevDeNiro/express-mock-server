@@ -10,6 +10,10 @@ router.get('/.well-known/jwks', async function (req, res) {
     res.json(keys.toJSON());
 });
 
+router.get('/.well-known/openid-configuration', async function (req, res) {
+    // TODO: Return the openid configuration
+})
+
 router.post('/', async function (req, res) {
     const body = req.body;
     const token = await generateJwtToken(body);

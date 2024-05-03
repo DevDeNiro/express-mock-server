@@ -5,8 +5,6 @@ const theLibrarySchema = new mongoose.Schema(
         title: {type: String, required: true},
         author: {type: String, required: true},
         description: {type: String},
-        genre: {type: String},
-        year: {type: Number},
         price: {type: Number, required: true},
         currency: {type: String, required: true},
     }
